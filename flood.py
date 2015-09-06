@@ -1,11 +1,24 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+"""
+flood.py - Phenny Flood Protection Module
+No liscensing or copyright
+COPYLEFT (ɔ)
+
+https://github.com/archmint/phenny_modules/blob/master/flood.py
+"""
 
 from time import time
 
 last = [] # last users (in past 10 secs)
+
 def flood(phenny, input):
-    splinput = input.encode("utf-8").split()
+    """ Every message someone types, phenny will see here.
+        If they flood (type six messages in ten seconds), he/she shall be kicked.
+        Note: phenny can only kick if she is op.
+        Note: you may want to change `phenny.write(['KICK', ...` to phenny.msg(['ChanServ', 'kick'], ...` so that phenny relies on ChanServ and not itself
+    """
+    splinput = input.encode("utf-8").split() # encode as utf... otherwise... uh-oh
     print u"[{}]({} on {}) {}".format(time(), input.nick, input.sender, input) # debug.. print everything ;)
     now = time()
     last.append((now, input.nick, input.sender)) # add (time, nick, channel) to last[]
@@ -23,4 +36,5 @@ def flood(phenny, input):
             spnick = nick.split('*') # split up nick into nick, chan
             phenny.write(['KICK', spnick[1], spnick[0], 'spam']) # kick them for spamming
             print 'kicking {} on {}'.format(spnick[0], spnick[1]) # tell 'em that you're kicking them
+flood.rule = r'.*' # match everything
 flood.priority = 'high'
